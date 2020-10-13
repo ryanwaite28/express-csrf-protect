@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "Easily enable CSRF protection to your express app",
   "main": "index.js",
+  "deprecated": false,
+  "homepage": "https://github.com/ryanwaite28/express-csrf",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -15,11 +17,19 @@
     "csrf",
     "xsrf"
   ],
-  "author": "Ryan M. Waite",
+  "author": {
+    "name": "Ryan M. Waite",
+    "email": "ryanwaite28@gmail.com",
+    "url": "https://github.com/ryanwaite28"
+  },
   "license": "ISC",
   "dependencies": {
     "cookie": "^0.4.1",
     "cookie-parser": "^1.4.5",
     "uuid": "^8.3.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryanwaite28/express-csrf.git"
   }
 }
