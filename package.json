@@ -1,0 +1,25 @@
+{
+  "name": "express-csrf",
+  "version": "1.0.0",
+  "description": "Easily enable CSRF protection to your express app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "node",
+    "npm",
+    "express",
+    "app",
+    "backend",
+    "csrf",
+    "xsrf"
+  ],
+  "author": "Ryan M. Waite",
+  "license": "ISC",
+  "dependencies": {
+    "cookie": "^0.4.1",
+    "cookie-parser": "^1.4.5",
+    "uuid": "^8.3.1"
+  }
+}
