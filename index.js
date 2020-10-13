@@ -1,7 +1,7 @@
 const cookie = require('cookie');
 const { v1: uuidv1 } = require('uuid');
 
-exports.expressCsrf = function(options) {
+exports.enable = function(options) {
   const sameSiteOptions = [
     'strict',
     'lax',
@@ -10,7 +10,7 @@ exports.expressCsrf = function(options) {
     false,
   ];
 
-  return function (request, response, next) {
+  const csrf_protect_fn = function csrf_protect (request, response, next) {
     const useOptions = {
       cookieName: options && options.cookieName || 'XSRF-TOKEN',
       headerName: options && options.headerName || 'X-XSRF-TOKEN',
@@ -28,10 +28,9 @@ exports.expressCsrf = function(options) {
       ),
     };
 
-    const unprotectedCsrfMethods = options && options.methods || [
-      'head',
-      'patch',
+    const unprotectedCsrfMethods = [
       'get',
+      'head',
       'trace',
     ];
     const notProtectedMethod = unprotectedCsrfMethods.includes(request.method.toLowerCase());
@@ -82,5 +81,7 @@ exports.expressCsrf = function(options) {
       // successfully validated.
       return next();
     }
-  }
+  };
+
+  return csrf_protect_fn;
 }
