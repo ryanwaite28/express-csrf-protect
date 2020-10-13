@@ -1,10 +1,10 @@
 {
-  "name": "express-csrf",
+  "name": "express-csrf-protect",
   "version": "1.0.0",
   "description": "Easily enable CSRF protection to your express app",
   "main": "index.js",
   "deprecated": false,
-  "homepage": "https://github.com/ryanwaite28/express-csrf",
+  "homepage": "https://github.com/ryanwaite28/express-csrf-protect",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -30,6 +30,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ryanwaite28/express-csrf.git"
+    "url": "git+https://github.com/ryanwaite28/express-csrf-protect.git"
   }
 }

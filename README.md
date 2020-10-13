@@ -19,7 +19,7 @@ This is a [Node.js](https://nodejs.org/en/) module available through the
 [`npm install` command](https://docs.npmjs.com/getting-started/installing-npm-packages-locally):
 
 ```sh
-$ npm install express-csrf
+$ npm install express-csrf-protect
 ```
 
 ### Demo
@@ -27,7 +27,7 @@ $ npm install express-csrf
 ```js
 const express = require('express');
 const cookieParser = require('cookie-parser');
-const expressCsrf = require('express-csrf');
+const expressCsrf = require('express-csrf-protect');
  
 const app = express();
 app.use(cookieParser()); // cookie-parser is needed
@@ -39,7 +39,7 @@ The middleware can also accept an `options` object, similar to the [csurf](https
 ```js
 const express = require('express');
 const cookieParser = require('cookie-parser');
-const expressCsrf = require('express-csrf');
+const expressCsrf = require('express-csrf-protect');
  
 const app = express();
 app.use(cookieParser()); // cookie-parser is needed
