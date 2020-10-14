@@ -20,7 +20,7 @@ exports.enable = function(options) {
       expires: options && options.expires,
       maxAge: options && options.maxAge,
       httpOnly: options && !!options.httpOnly || false,
-      sameSite: options && sameSiteOptions.includes(options.sameSite) && options.sameSite || 'none',
+      sameSite: options && sameSiteOptions.includes(options.sameSite) && options.sameSite,
       domain: options && (
         options.useGivenDomain
           ? options.domain
