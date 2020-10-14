@@ -1,12 +1,15 @@
 {
   "name": "express-csrf-protect",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Easily enable CSRF protection to your express app",
   "main": "index.js",
   "deprecated": false,
   "homepage": "https://github.com/ryanwaite28/express-csrf-protect",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
   },
   "keywords": [
     "node",

@@ -24,7 +24,7 @@ exports.enable = function(options) {
       domain: options && (
         options.useGivenDomain
           ? options.domain
-          : (options.domain || request.get('host'))
+          : (options.domain || ((request.get('host') || '').includes('localhost') ? '' : request.get('host')))
       ),
     };
 
