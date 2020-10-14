@@ -11,19 +11,15 @@ exports.enable = function(options) {
   ];
 
   const csrf_protect_fn = function csrf_protect (request, response, next) {
-    const origin = request.get('origin') || '';
+    const host = request.get('host') || '';
     const useDomain = options && (
       options.useGivenDomain
         ? options.domain
         : (
             options.domain || (
-              origin.includes('localhost')
+              host.includes('localhost')
                 ? ''
-                : (
-                    origin.startsWith('https')
-                      ? origin.replace('https://', '')
-                      : origin.replace('http://', '')
-                  )
+                : host
             )
           )
     );
