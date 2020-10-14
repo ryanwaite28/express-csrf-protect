@@ -29,6 +29,7 @@ exports.enable = function(options) {
     };
 
     const unprotectedCsrfMethods = [
+      'options',
       'get',
       'head',
       'trace',
