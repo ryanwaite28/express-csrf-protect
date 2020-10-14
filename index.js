@@ -11,6 +11,22 @@ exports.enable = function(options) {
   ];
 
   const csrf_protect_fn = function csrf_protect (request, response, next) {
+    const origin = request.get('origin') || '';
+    const useDomain = options && (
+      options.useGivenDomain
+        ? options.domain
+        : (
+            options.domain || (
+              origin.includes('localhost')
+                ? ''
+                : (
+                    origin.startsWith('https')
+                      ? origin.replace('https://', '')
+                      : origin.replace('http://', '')
+                  )
+            )
+          )
+    );
     const useOptions = {
       cookieName: options && options.cookieName || 'XSRF-TOKEN',
       headerName: options && options.headerName || 'X-XSRF-TOKEN',
@@ -21,11 +37,7 @@ exports.enable = function(options) {
       maxAge: options && options.maxAge,
       httpOnly: options && !!options.httpOnly || false,
       sameSite: options && sameSiteOptions.includes(options.sameSite) && options.sameSite,
-      domain: options && (
-        options.useGivenDomain
-          ? options.domain
-          : (options.domain || ((request.get('host') || '').includes('localhost') ? '' : request.get('host')))
-      ),
+      domain: useDomain,
     };
 
     const unprotectedCsrfMethods = [
