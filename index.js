@@ -1,4 +1,5 @@
 const cookie = require('cookie');
+const cookieParser = require('cookie-parser');
 const { v1: uuidv1 } = require('uuid');
 
 exports.enable = function(options) {
@@ -92,5 +93,5 @@ exports.enable = function(options) {
     }
   };
 
-  return csrf_protect_fn;
+  return [cookieParser(), csrf_protect_fn];
 }

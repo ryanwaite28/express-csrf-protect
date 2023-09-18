@@ -26,26 +26,40 @@ $ npm install express-csrf-protect
 
 ```js
 const express = require('express');
-const cookieParser = require('cookie-parser');
 const expressCsrf = require('express-csrf-protect');
  
 const app = express();
-app.use(cookieParser()); // cookie-parser is needed
+
 app.use(expressCsrf.enable());
+
+app.get('/', (request, response) => {
+  return response.json({ message: 'admit one' });
+});
+
+app.post('/', (request, response) => {
+  return response.json({ message: 'admit one' });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT);
+console.log(`Listening on port ${PORT}...\n\n`);
 ```
 
 The middleware can also accept an `options` object, similar to the [csurf](https://www.npmjs.com/package/csurf) package:
 
 ```js
 const express = require('express');
-const cookieParser = require('cookie-parser');
 const expressCsrf = require('express-csrf-protect');
  
 const app = express();
-app.use(cookieParser()); // cookie-parser is needed
+
 app.use(expressCsrf.enable({
   httpOnly: false,
   domain: 'some-domain',
   path: 'some-path'
 }));
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT);
+console.log(`Listening on port ${PORT}...\n\n`);
 ```
