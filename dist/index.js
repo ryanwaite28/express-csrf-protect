@@ -28,8 +28,8 @@ const enableCsrfProtect = function (options) {
         //         )
         //       )
         // );
-        const useCookieName = options && options.hasOwnProperty('cookieName') ? options.cookieName : 'XSRF-TOKEN';
-        const useHeaderName = options && options.hasOwnProperty('headerName') ? options.headerName : 'X-XSRF-TOKEN';
+        const useCookieName = !!options && !!options.cookieName ? options.cookieName : 'XSRF-TOKEN';
+        const useHeaderName = !!options && !!options.headerName ? options.headerName : 'X-XSRF-TOKEN';
         const unprotectedCsrfMethods = [
             'options',
             'get',
@@ -37,13 +37,15 @@ const enableCsrfProtect = function (options) {
             'trace',
         ];
         const notProtectedMethod = unprotectedCsrfMethods.includes(request.method.toLowerCase());
+        const useCookieSerializeOptions = !!options && !!options.cookieSerializeOptions
+            ? Object.assign({}, options && options.cookieSerializeOptions) : {};
         if (notProtectedMethod) {
             // no need to validate.
             // check if the request had the cookie. if not, set new one on response.
             const csrfCookie = request.cookies && request.cookies[useCookieName];
             if (!csrfCookie) {
                 // taken from: https://www.npmjs.com/package/cookie
-                const newCsrfCookie = cookie_1.default.serialize(useCookieName, (0, uuid_1.v1)(), options ? options.cookieSerializeOptions : {});
+                const newCsrfCookie = cookie_1.default.serialize(useCookieName, (0, uuid_1.v1)(), useCookieSerializeOptions);
                 response.setHeader('Set-Cookie', newCsrfCookie);
             }
             return next();

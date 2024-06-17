@@ -5,9 +5,9 @@ import { v1 as uuidv1 } from 'uuid';
 
 
 export interface CsrfProtectOptions {
-  cookieName: string,
-  headerName: string,
-  cookieSerializeOptions: cookie.CookieSerializeOptions,
+  cookieName?: string,
+  headerName?: string,
+  cookieSerializeOptions?: cookie.CookieSerializeOptions,
 }
 
 export const enableCsrfProtect = function(options?: CsrfProtectOptions) {
@@ -33,8 +33,8 @@ export const enableCsrfProtect = function(options?: CsrfProtectOptions) {
     //       )
     // );
 
-    const useCookieName: string = options && options.hasOwnProperty('cookieName') ? options.cookieName : 'XSRF-TOKEN';
-    const useHeaderName: string = options && options.hasOwnProperty('headerName') ? options.headerName : 'X-XSRF-TOKEN';
+    const useCookieName: string = !!options && !!options.cookieName ? options.cookieName : 'XSRF-TOKEN';
+    const useHeaderName: string = !!options && !!options.headerName ? options.headerName : 'X-XSRF-TOKEN';
 
     const unprotectedCsrfMethods = [
       'options',
@@ -44,13 +44,17 @@ export const enableCsrfProtect = function(options?: CsrfProtectOptions) {
     ];
     const notProtectedMethod = unprotectedCsrfMethods.includes(request.method.toLowerCase());
 
+    const useCookieSerializeOptions = !!options && !!options.cookieSerializeOptions
+      ? { ...options && options.cookieSerializeOptions }
+      : {}
+
     if (notProtectedMethod) {
       // no need to validate.
       // check if the request had the cookie. if not, set new one on response.
       const csrfCookie = request.cookies && request.cookies[useCookieName];
       if (!csrfCookie) {
         // taken from: https://www.npmjs.com/package/cookie
-        const newCsrfCookie = cookie.serialize(useCookieName, uuidv1(), options ? options.cookieSerializeOptions : {});
+        const newCsrfCookie = cookie.serialize(useCookieName, uuidv1(), useCookieSerializeOptions);
         response.setHeader('Set-Cookie', newCsrfCookie);
       }
       return next();
