@@ -30,7 +30,7 @@ export interface CsrfBypassConfig {
      * Calls this method when a request matches a bypass config
      * @returns {booelan}
      */
-    onBypass?: (request: any, bypassConfig: CsrfBypassConfig) => boolean;
+    onBypass?: (request?: any, bypassConfig?: CsrfBypassConfig) => boolean;
 }
 /**
  * Configurations for the CSRF middleware.
