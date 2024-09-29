@@ -1,6 +1,6 @@
 {
   "name": "express-csrf-protect",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "Easily enable CSRF protection to your express app",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
