@@ -30,7 +30,7 @@ export interface CsrfBypassConfig {
   strategy?: 'exact' | 'prefix' | 'contains' | 'suffix',
 
   /**
-   * The condition on which this bypass should be considered. If defined, takes precedence over vlaidating via the other config properties
+   * The condition on which this bypass should be considered IF there is a match
    * @returns {booelan}
    */
   onCondition?: (request) => boolean,
@@ -103,9 +103,6 @@ export const CreateCsrfProtectMiddleware = function<T extends boolean, R = T ext
     */
     for (const bypassConfig of bypassConfigs) {
       // check the onCondition
-      if (bypassConfig.onCondition !== undefined) {       
-        return bypassConfig.onCondition(request);
-      }
 
       // check if config has a method to check against and if it matches the request method
       if (!!bypassConfig.method && bypassConfig.method.toLowerCase() !== request.method.toLowerCase()) {
@@ -130,7 +127,9 @@ export const CreateCsrfProtectMiddleware = function<T extends boolean, R = T ext
         }
       })();
 
-      if (match) {
+      const conditionApplies = !bypassConfig.onCondition || bypassConfig.onCondition(request);
+
+      if (match && conditionApplies) {
         if (bypassConfig.onBypass) {
           bypassConfig.onBypass(request, bypassConfig);
         }

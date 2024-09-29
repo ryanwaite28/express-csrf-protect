@@ -29,9 +29,6 @@ const CreateCsrfProtectMiddleware = function (options, useCookieParser) {
         */
         for (const bypassConfig of bypassConfigs) {
             // check the onCondition
-            if (bypassConfig.onCondition !== undefined) {
-                return bypassConfig.onCondition(request);
-            }
             // check if config has a method to check against and if it matches the request method
             if (!!bypassConfig.method && bypassConfig.method.toLowerCase() !== request.method.toLowerCase()) {
                 // the config had a method specified but did not match the request method; continue to next config
@@ -52,7 +49,8 @@ const CreateCsrfProtectMiddleware = function (options, useCookieParser) {
                         return request[bypassConfig.context].endsWith(bypassConfig.route);
                 }
             })();
-            if (match) {
+            const conditionApplies = !bypassConfig.onCondition || bypassConfig.onCondition(request);
+            if (match && conditionApplies) {
                 if (bypassConfig.onBypass) {
                     bypassConfig.onBypass(request, bypassConfig);
                 }

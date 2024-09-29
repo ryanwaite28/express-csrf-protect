@@ -22,7 +22,7 @@ export interface CsrfBypassConfig {
      */
     strategy?: 'exact' | 'prefix' | 'contains' | 'suffix';
     /**
-     * The condition on which this bypass should be considered. If defined, takes precedence over vlaidating via the other config properties
+     * The condition on which this bypass should be considered IF there is a match
      * @returns {booelan}
      */
     onCondition?: (request: any) => boolean;
