@@ -118,6 +118,9 @@ const CreateCsrfProtectMiddleware = function (options, useCookieParser) {
                 });
             }
             // successfully validated.
+            if (options && options.onSuccess) {
+                options.onSuccess();
+            }
             return next();
         }
     };

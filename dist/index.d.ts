@@ -58,12 +58,17 @@ export interface CsrfProtectOptions {
      */
     bypassConfigs?: Array<CsrfBypassConfig>;
     /**
-     * Calls this method when a request does not match a bypass config
+     * Calls this method when a request fails CSRF validation
      * @returns {booelan}
      */
     onError?: (details: {
         message: string;
     }) => void;
+    /**
+     * Calls this method when a request passes CSRF validation
+     * @returns {booelan}
+     */
+    onSuccess?: () => void;
 }
 export declare const CreateCsrfProtectMiddleware: <T extends boolean, R = T extends true ? any[] : (request: any, response: any, next: any) => any>(options?: CsrfProtectOptions, useCookieParser?: T) => R;
 export declare const enableCsrfProtect: (options?: CsrfProtectOptions) => any[];
