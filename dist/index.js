@@ -8,6 +8,7 @@ const cookie_1 = __importDefault(require("cookie"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const uuid_1 = require("uuid");
 const CreateCsrfProtectMiddleware = function (options, useCookieParser) {
+    console.log(`CSRF protection - options:`, options);
     const useCookieSerializeOptions = !!options && !!options.cookieSerializeOptions
         ? Object.assign({}, options && options.cookieSerializeOptions) : {};
     const unprotectedCsrfMethods = (options && options.unprotectedMethods) ? options.unprotectedMethods : [
@@ -16,6 +17,7 @@ const CreateCsrfProtectMiddleware = function (options, useCookieParser) {
         'head',
         'trace',
     ];
+    console.log("Using unprotected http methods:", unprotectedCsrfMethods);
     const useCookieName = !!options && !!options.cookieName ? options.cookieName : 'XSRF-TOKEN';
     const useHeaderName = !!options && !!options.headerName ? options.headerName : 'X-XSRF-TOKEN';
     const checkShouldBypass = (request) => {
@@ -51,9 +53,7 @@ const CreateCsrfProtectMiddleware = function (options, useCookieParser) {
             })();
             const conditionApplies = !bypassConfig.onCondition || bypassConfig.onCondition(request);
             if (match && conditionApplies) {
-                if (bypassConfig.onBypass) {
-                    bypassConfig.onBypass(request, bypassConfig);
-                }
+                bypassConfig.onBypass && bypassConfig.onBypass();
                 return true;
             }
         }
@@ -81,22 +81,40 @@ const CreateCsrfProtectMiddleware = function (options, useCookieParser) {
             const csrfCookie = request.cookies && request.cookies[useCookieName];
             if (!csrfCookie) {
                 // no cookie found
+                const errorMessage = `forbidden: cookie with name "${useCookieName}" is not found in request`;
+                if (options && options.onError) {
+                    options.onError({
+                        message: errorMessage
+                    });
+                }
                 return response.status(403).json({
-                    message: `forbidden: cookie with name "${useCookieName}" is not found in request`
+                    message: errorMessage
                 });
             }
             const csrfHeader = request.get(useHeaderName);
             if (!csrfHeader) {
                 // no header found
+                const errorMessage = `forbidden: header with name "${useHeaderName}" is not found in request`;
+                if (options && options.onError) {
+                    options.onError({
+                        message: errorMessage
+                    });
+                }
                 return response.status(403).json({
-                    message: `forbidden: header with name "${useHeaderName}" is not found in request`
+                    message: errorMessage,
                 });
             }
             const doesNotMatch = csrfCookie !== csrfHeader;
             if (doesNotMatch) {
+                const errorMessage = `forbidden: header with name "${useHeaderName}" does not match cookie with name "${useCookieName}"`;
+                if (options && options.onError) {
+                    options.onError({
+                        message: errorMessage
+                    });
+                }
                 // both found but does not match
                 return response.status(403).json({
-                    message: `forbidden: header with name "${useHeaderName}" does not match cookie with name "${useCookieName}"`
+                    message: errorMessage
                 });
             }
             // successfully validated.

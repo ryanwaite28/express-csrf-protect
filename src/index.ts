@@ -39,7 +39,7 @@ export interface CsrfBypassConfig {
    * Calls this method when a request matches a bypass config
    * @returns {booelan}
    */
-  onBypass?: (request?, bypassConfig?: CsrfBypassConfig) => void
+  onBypass?: () => void,
 }
 
 
@@ -71,10 +71,20 @@ export interface CsrfProtectOptions {
   /**
    * Allows for bypassing certain endpoints.
    */
-  bypassConfigs?: Array<CsrfBypassConfig>
+  bypassConfigs?: Array<CsrfBypassConfig>,
+
+  /**
+   * Calls this method when a request does not match a bypass config
+   * @returns {booelan}
+   */
+  onError?: (details: {
+    message: string
+  }) => void,
 }
 
 export const CreateCsrfProtectMiddleware = function<T extends boolean, R = T extends true ? (any[]) : (request, response, next) => any>(options?: CsrfProtectOptions, useCookieParser?: T): R {
+
+  console.log(`CSRF protection - options:`, options);
 
   const useCookieSerializeOptions = !!options && !!options.cookieSerializeOptions
     ? { ...options && options.cookieSerializeOptions }
@@ -86,6 +96,8 @@ export const CreateCsrfProtectMiddleware = function<T extends boolean, R = T ext
     'head',
     'trace',
   ];
+
+  console.log("Using unprotected http methods:", unprotectedCsrfMethods)
 
   const useCookieName: string = !!options && !!options.cookieName ? options.cookieName : 'XSRF-TOKEN';
   const useHeaderName: string = !!options && !!options.headerName ? options.headerName : 'X-XSRF-TOKEN';
@@ -110,7 +122,7 @@ export const CreateCsrfProtectMiddleware = function<T extends boolean, R = T ext
         continue;
       }
 
-      const match = (() => {
+      const match: boolean = (() => {
         if (!bypassConfig.context || !bypassConfig.route) {
           return false;
         }
@@ -127,12 +139,10 @@ export const CreateCsrfProtectMiddleware = function<T extends boolean, R = T ext
         }
       })();
 
-      const conditionApplies = !bypassConfig.onCondition || bypassConfig.onCondition(request);
+      const conditionApplies: boolean = !bypassConfig.onCondition || bypassConfig.onCondition(request);
 
       if (match && conditionApplies) {
-        if (bypassConfig.onBypass) {
-          bypassConfig.onBypass(request, bypassConfig);
-        }
+        bypassConfig.onBypass && bypassConfig.onBypass();
         return true;
       }
     }
@@ -166,22 +176,42 @@ export const CreateCsrfProtectMiddleware = function<T extends boolean, R = T ext
       const csrfCookie = request.cookies && request.cookies[useCookieName];
       if (!csrfCookie) {
         // no cookie found
+        const errorMessage = `forbidden: cookie with name "${useCookieName}" is not found in request`;
+        if (options && options.onError) {
+          options.onError({
+            message: errorMessage
+          });
+        }
         return response.status(403).json({
-          message: `forbidden: cookie with name "${useCookieName}" is not found in request`
+          message: errorMessage
         });
       }
+
       const csrfHeader = request.get(useHeaderName);
       if (!csrfHeader) {
         // no header found
+        const errorMessage = `forbidden: header with name "${useHeaderName}" is not found in request`;
+        if (options && options.onError) {
+          options.onError({
+            message: errorMessage
+          });
+        }
         return response.status(403).json({
-          message: `forbidden: header with name "${useHeaderName}" is not found in request`
+          message: errorMessage,
         });
       }
+
       const doesNotMatch = csrfCookie !== csrfHeader;
       if (doesNotMatch) {
+        const errorMessage = `forbidden: header with name "${useHeaderName}" does not match cookie with name "${useCookieName}"`;
+        if (options && options.onError) {
+          options.onError({
+            message: errorMessage
+          });
+        }
         // both found but does not match
         return response.status(403).json({
-          message: `forbidden: header with name "${useHeaderName}" does not match cookie with name "${useCookieName}"`
+          message: errorMessage
         });
       }
 
